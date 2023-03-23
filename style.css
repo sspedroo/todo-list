@@ -1,0 +1,30 @@
+* {
+    user-select: none;
+}
+
+div {
+    color: white;
+    text-align: center;
+    padding-bottom: 5pt;
+}
+
+li {
+    user-select: none;
+    font-size: 20px;
+}
+
+.riscada {
+    text-decoration: line-through;
+    background-color: rgba(182, 179, 179, 0.685);
+}
+
+.titulo-card{
+    color: black;
+    background-color: aquamarine;
+    font-weight: 700;
+    font-size: 22px;
+}
+
+.insiraTarefa{
+    max-width: 600px;
+}
