@@ -2,7 +2,21 @@ const btnAdicionar = document.querySelector(".btn-success");
 const btnDeletar = document.querySelector(".btn-danger")
 const campoTexto = document.querySelector("#txt");
 const listaTarefas = document.querySelector(".list-group");
-const tarefas = [];
+let tarefas = [];
+const recuperarTarefa = localStorage.getItem("tarefas")
+
+ if(recuperarTarefa) {
+    tarefas = JSON.parse(recuperarTarefa);
+    for(let i = 0; i<tarefas.length; i++){
+        const novoItem = document.createElement("li");
+        novoItem.classList.add("list-group-item");
+        novoItem.innerHTML= `
+                <span>${tarefas[i]}</span>
+                <button type="button" class="btn btn-danger btn-sm float-end ms-2 btnExcluir">Excluir</button>
+                `;
+        listaTarefas.appendChild(novoItem)
+    }
+} 
 
 
 btnAdicionar.addEventListener("click", adicionarTarefa);
@@ -17,6 +31,8 @@ function adicionarTarefa (){
     if(novaTarefa !==""){
 
       tarefas.push(novaTarefa); //adicionando essa variavel que acabei de criar ao array de tarefas que criei la em cima
+
+      localStorage.setItem("tarefas", JSON.stringify(tarefas));
 
       const novoItem = document.createElement("li"); //aqui estou criando uma variavel que está recebendo a criação de um novo elemento do tipo LI(list item)
       novoItem.classList.add("list-group-item"); //adicionei a class "list-group-item" ao elemento LI recem criado
@@ -34,13 +50,15 @@ function adicionarTarefa (){
 }
 
 function excluirTarefa(event){//criando funcão para deletar uma tarefa unica da lista
-    if(event.target.classList.contains("btnExcluir")){ //aqui estou dizendo o seguinte, se o evento (no caso click), se o alvo dele (onde ele foi clicado), contem a classe (btnExcluir)
-        const item = event.target.parentElement;//criando uma variavel chamado item que recebe o elemento pai do alvo do click (algo como cliquei no botão e quero pegar o elemento pai do botao, aonde ele esta inserido no caso o LI)
-        console.log(item)
-        const itemId = Array.from(listaTarefas.children).indexOf(item);//aqui estamos criando uma variavel pra saber descobrir de certa forma qual o item q vai ser excluido, dessa forma ele pega o listaTarefas q é nosso UL e acessa os filhos dele, no nosso caso os LI dentro da UL, so que isso não é um array, então nao da pra usar o indexOf, assim usamos o arrayFrom para instanciar(criar) um array dos LI, ai usamos o indexOf(item) e passamos como parametro a variavel "item" que esta recebendo o LI do botão que clicamos. Entao criamos um array com os LI e buscamos nesse array qual LI foi clicado usando o metedo indexOF e passando o item como parametro, ele busca no array o indice desse paremetro
-        console.log(itemId)
-        tarefas.splice(itemId, 1);//removendo do array de tarefas o itemID, passando o  itemID para mostrar a partir de qual indice q é para remover e quantos indices a partir do indice inicial seria excluido, nesse caso apenas um mesmo. Necessario remover pois nesse array deve conter somente as tarefas que estão presentes na lista mesmo
-        item.remove();//aqui estamos removendo do html o item LI que esta na variavel item, assim saindo da UL
+    if(event.target.classList.contains("btnExcluir")){//aqui estou dizendo o seguinte, se o evento (no caso click), se o alvo dele (onde ele foi clicado), contem a classe (btnExcluir)
+      const item = event.target.parentElement; //criando uma variavel chamado item que recebe o elemento pai do alvo do click (algo como cliquei no botão e quero pegar o elemento pai do botao, aonde ele esta inserido no caso o LI)
+      const itemId = Array.from(listaTarefas.children).indexOf(item); //aqui estamos criando uma variavel pra saber descobrir de certa forma qual o item q vai ser excluido, dessa forma ele pega o listaTarefas q é nosso UL e acessa os filhos dele, no nosso caso os LI dentro da UL, so que isso não é um array, então nao da pra usar o indexOf, assim usamos o arrayFrom para instanciar(criar) um array dos LI, ai usamos o indexOf(item) e passamos como parametro a variavel "item" que esta recebendo o LI do botão que clicamos. Entao criamos um array com os LI e buscamos nesse array qual LI foi clicado usando o metedo indexOF e passando o item como parametro, ele busca no array o indice desse paremetro
+      tarefas.splice(itemId, 1); //removendo do array de tarefas o itemID, passando o  itemID para mostrar a partir de qual indice q é para remover e quantos indices a partir do indice inicial seria excluido, nesse caso apenas um mesmo. Necessario remover pois nesse array deve conter somente as tarefas que estão presentes na lista mesmo
+      item.remove(); //aqui estamos removendo do html o item LI que esta na variavel item, assim saindo da UL
+
+      const tarefasNoLocalStorage = JSON.parse(localStorage.getItem("tarefas")); //Criamos uma constante chamada tarefasNoLocalStorage, que recebe o valor do conteúdo da chave "tarefas" no localStorage.Usamos a função JSON.parse() para transformar o valor da chave "tarefas" (que foi armazenado como uma string) em um objeto JavaScript.
+      const tarefaExcluida = tarefasNoLocalStorage.splice(itemId, 1); //Criamos uma constante chamada tarefaExcluida, que recebe o valor do elemento do array tarefasNoLocalStorage que foi removido através da função splice(). A função splice() remove um elemento do array a partir de um índice (itemId) e com um comprimento de 1. Ela também retorna um novo array contendo o elemento removido.
+      localStorage.setItem("tarefas", JSON.stringify(tarefasNoLocalStorage)); //Usamos a função localStorage.setItem() para atualizar o valor da chave "tarefas" no localStorage. Usamos a função JSON.stringify() para transformar o objeto JavaScript tarefasNoLocalStorage em uma string JSON, que é o formato aceito pelo localStorage.
     }
 }
 
@@ -53,5 +71,5 @@ function riscarTarefa(event) {//aqui estou passando como paramentro o evento que
 function limparTarefas(){
         listaTarefas.innerHTML= "";//aqui eu pegando a variavel lista de tarefas que é responsavel pelo list group e to alterando todo o html dele, atribuindo apenas algo vazio, assim apagando todo o conteudo dele, todas as tags e elementos html em geral.
         tarefas.length = 0;//aqui estou limpando o array de tarefas adicionadas, pois como feito em cima eu ja removi todo o conteudo do lista de tarefas entao no array tbm nao pode ter nada
+        localStorage.clear();
 }
-
